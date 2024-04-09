@@ -7,6 +7,7 @@ const ProductList = () => {
   useEffect(() => {
     fetchProducts();
   }, []);
+
   async function fetchProducts() {
     try {
       const response = await axios.get("/api/products");
@@ -17,6 +18,19 @@ const ProductList = () => {
       return []; // Return an empty array or appropriate error handling
     }
   }
+
+  async function deleteProduct(productId) {
+    try {
+      await axios.delete(`/api/products/${productId}`);
+      // Remove the deleted product from the state
+      setProducts(products.filter(product => product.id !== productId));
+      console.log("Product deleted successfully");
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      // Handle error appropriately
+    }
+  }
+
   return (
     <div>
       <h2>Products</h2>
@@ -24,6 +38,7 @@ const ProductList = () => {
         {products.map((product) => (
           <li key={product.id}>
             {product.name} - ${product.price}
+            <button onClick={() => deleteProduct(product.id)}>Delete</button>
           </li>
         ))}
       </ul>
